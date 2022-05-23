@@ -7,19 +7,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_rocket_page.css">
     <script src="script.js"></script>
 </head>
 
 <body onload="loadRockets();">
     <header>
-        <div class="logo-container" onclick="renderMainPage()">
+        <div class="logo-container" onclick="showMainPage()">
             <div class="logo-left">SpaceX </div>
             <div class="logo-right">explorer</div>
         </div>
 
         <div class="navbar">
             <ul class="nav-links">
-                <li class="nav-items hover-underline-animation" onclick="renderRocketPage()">Rockets</li>
+                <li class="nav-items hover-underline-animation" onclick="showRocketPage()">Rockets</li>
                 <li class="nav-items hover-underline-animation">Launches</li>
             </ul>
         </div>
@@ -30,7 +31,7 @@
             style="background-image: url(img/white-train-airport-airplane-transport-vehicle-1038771-pxhere.com.jpg);">
             <div class="main-page-link-container">
                 <h2>Rockets</h2>
-                <button class="hover-background-animation link-1" onclick="renderRocketPage()">Browse</button>
+                <button class="hover-background-animation link-1" onclick="showRocketPage()">Browse</button>
             </div>
         </div>
         <div class="starts main-background-setting"
@@ -48,85 +49,8 @@
         </div>
         <div class="rocket-data-card d-none main" id="rocket-data">
             <div class="rocket-data-left" id="rocket-data-left">
-                <!-- <h2>Falcon 9</h2>
-                <div class="rocket-data-img-container">
-                    <div class="slideshow-container" id="slideshow-container">
-                        <div class="mySlides fade">
-                            <img src="img/falcon9.jpg" style="width:100%">
-                        </div>
-                        <div class="mySlides fade">
-                            <img src="img/Fallback.jpeg" style="width:100%">
-                        </div>
-                        <div class="mySlides fade">
-                            <img src="img/MaxPixel.net-Lift-off-Rocket-Launch-Night-Spacex-Countdown-693233.jpg"
-                                style="width:100%">
-                        </div>
-                        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-                        <a class="next" onclick="plusSlides(1)">&#10095;</a>
-                    </div>
-                    <div id="dot-container" style="text-align:center">
-                        <span class="dot" onclick="currentSlide(1)"></span>
-                        <span class="dot" onclick="currentSlide(2)"></span>
-                        <span class="dot" onclick="currentSlide(3)"></span>
-                    </div>
-                </div> -->
             </div>
             <div class="rocket-data-right" id="rocket-data-right">
-                <h3>Data</h3>
-                <table>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">First flight:</td>
-                        <td class="rockets-data-value">2006-03-24</td>
-                    </tr>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">Material:</td>
-                        <td class="rockets-data-value">Carbon Fiber</td>
-                    </tr>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">Height:</td>
-                        <td class="rockets-data-value">22.25m</td>
-                    </tr>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">Diameter:</td>
-                        <td class="rockets-data-value">1.68m</td>
-                    </tr>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">Mass:</td>
-                        <td class="rockets-data-value">30146kg</td>
-                    </tr>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">Engines:</td>
-                        <td class="rockets-data-value">4</td>
-                    </tr>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">Cost Per Launch:</td>
-                        <td class="rockets-data-value">6700000$</td>
-                    </tr>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">Success Rate:</td>
-                        <td class="rockets-data-value">40%</td>
-                    </tr>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">In USe:</td>
-                        <td class="rockets-data-value">false</td>
-                    </tr>
-                </table>
-                <h4>Payload Weights</h4>
-                <table>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">LEO:</td>
-                        <td class="rockets-data-value">22800kg</td>
-                    </tr>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">GEO</td>
-                        <td class="rockets-data-value">8300kg</td>
-                    </tr>
-                    <tr class="rockets-row">
-                        <td class="rockets-data-name">Mars</td>
-                        <td class="rockets-data-value">4020kg</td>
-                    </tr>
-                </table>
-                <button class="hover-background-animation link-2" onclick="closeRocketDataCard()">Back</button>
             </div>
         </div>
 

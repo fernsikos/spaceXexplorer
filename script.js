@@ -5,24 +5,8 @@ async function loadRockets() {
     let url = `https://api.spacexdata.com/v4/rockets`;
     let rockets = await fetch(url);
     rocketsAsJson = await rockets.json();
-    loadRocket()
-}
-
-function renderRocketPage() {
-    for (let i = 0; i < main.length; i++) {
-        const mainElement = main[i];
-        mainElement.classList.add('d-none')
-    }
-    closeRocketDataCard();
-    document.getElementById('rockets').classList.remove('d-none');
-}
-
-function renderMainPage() {
-    for (let i = 0; i < main.length; i++) {
-        const mainElement = main[i];
-        mainElement.classList.add('d-none')
-    }
-    document.getElementById('main-page').classList.remove('d-none');
+    loadRocket();
+    document.getElementById('main-page').classList.add('fade-in');
 }
 
 function loadRocket() {
@@ -48,6 +32,7 @@ function createRocketDataCard(i) {
     let dataRight = document.getElementById('rocket-data-right');
     emptyDataHtml(dataLeft, dataRight);
     fillRocketDataLeft(i, dataLeft);
+    fillRocketDataRight(i, dataRight);
 
     openRocketDataCard();
 }
@@ -66,6 +51,31 @@ function fillRocketDataLeft(i, dataLeft) {
     createslideshow(i);
 }
 
+function fillRocketDataRight(i, dataRight) {
+    let rocket = rocketsAsJson[i];
+    let firstFlight = rocket['first_flight'];
+    let height = rocket['height']['meters'];
+    let diameter = rocket['diameter']['meters'];
+    let mass = rocket['mass']['kg'];
+    let engines = rocket['engines']['numer'];
+    let costPerLaunch = rocket['cost_per_launch'];
+    let successRate = rocket['success_rate_pct'];
+    let active = rocket['active'];
+    let payloadWeights = rocket['payload_weights'];
+    dataRight.innerHTML += createRocketDataRightHtml(firstFlight, height, diameter, mass, engines, costPerLaunch, successRate, active, payloadWeights);
+    fillPayloadWeights(payloadWeights);
+}
+
+function fillPayloadWeights(payloadWeights) {
+    for (let i = 0; i < payloadWeights.length; i++) {
+        const payloadWeight = payloadWeights[i];
+        let payloadId = payloadWeight['id'];
+        let weight = payloadWeight['kg'];
+        let container = document.getElementById('payloadWeigths');
+        container.innerHTML += createPayloadHtml(payloadId, weight);
+    }
+}
+
 // Create Slideshow
 
 function createslideshow(i) {
@@ -76,7 +86,7 @@ function createslideshow(i) {
         const picture = pictures[i];
         imgContainer.innerHTML += /*html*/ `
             <div class="mySlides fade">
-                <img src="${picture}" style="width:100%">
+                <img src="${picture}" onerror='this.onerror = null; this.src="img/Fallback.jpeg"' ">
             </div>`;
         dotContainer.innerHTML += /*html*/ `
             <span class="dot" onclick="currentSlide(${i + 1})"></span>`;
@@ -86,7 +96,45 @@ function createslideshow(i) {
         <a class="next" onclick="plusSlides(1)">&#10095;</a>`;
 }
 
-// Open Rocket Data Card
+// Show Rocket Page Animation
+
+function showRocketPage() {
+    for (let i = 0; i < main.length; i++) {
+        const mainElement = main[i];
+        mainElement.classList.remove('fade-in')
+        setTimeout(() => {
+            mainElement.classList.add('d-none')
+        }, 500);
+    };
+    closeRocketDataCard();
+    setTimeout(() => {
+        document.getElementById('rockets').classList.remove('d-none');
+    }, 500);
+    setTimeout(() => {
+        document.getElementById('rockets').classList.add('fade-in');
+    }, 550);
+
+}
+
+// Show Main Page Animation
+
+function showMainPage() {
+    for (let i = 0; i < main.length; i++) {
+        const mainElement = main[i];
+        mainElement.classList.remove('fade-in');
+        setTimeout(() => {
+            mainElement.classList.add('d-none')
+        }, 500);
+    };
+    setTimeout(() => {
+        document.getElementById('main-page').classList.remove('d-none');
+    }, 500);
+    setTimeout(() => {
+        document.getElementById('main-page').classList.add('fade-in');
+    }, 550);
+}
+
+// Open Rocket Data Card Animation
 
 function openRocketDataCard(i) {
     document.getElementById('rockets-container').classList.add('fade-out');
@@ -99,7 +147,7 @@ function openRocketDataCard(i) {
     }, 800);
 }
 
-// Closes Rocket Data Card
+// Closes Rocket Data Card Animation
 function closeRocketDataCard() {
     document.getElementById('rocket-data').classList.remove('fade-in');
     setTimeout(() => {
@@ -161,4 +209,55 @@ function createrocketDataLeftHtml(i) {
     <div class="slideshow-container" id="slideshow-container"></div>
     <div id="dot-container" style="text-align:center"></div>
     `;
+}
+
+function createRocketDataRightHtml(firstFlight, height, diameter, mass, engines, costPerLaunch, successRate, active, payloadWeights) {
+    return /*html*/ `
+    <h3>Data</h3>
+    <table>
+        <tr class="rockets-row">
+            <td class="rockets-data-name">First flight:</td>
+            <td class="rockets-data-value">${firstFlight}</td>
+        </tr>
+        <tr class="rockets-row">
+            <td class="rockets-data-name">Height:</td>
+            <td class="rockets-data-value">${height}m</td>
+        </tr>
+        <tr class="rockets-row">
+            <td class="rockets-data-name">Diameter:</td>
+            <td class="rockets-data-value">${diameter}m</td>
+        </tr>
+        <tr class="rockets-row">
+            <td class="rockets-data-name">Mass:</td>
+            <td class="rockets-data-value">${mass}kg</td>
+        </tr>
+        <tr class="rockets-row">
+            <td class="rockets-data-name">Engines:</td>
+            <td class="rockets-data-value">${engines}</td>
+        </tr>
+        <tr class="rockets-row">
+            <td class="rockets-data-name">Cost Per Launch:</td>
+            <td class="rockets-data-value">${costPerLaunch}$</td>
+        </tr>
+        <tr class="rockets-row">
+            <td class="rockets-data-name">Success Rate:</td>
+            <td class="rockets-data-value">${successRate}%</td>
+        </tr>
+        <tr class="rockets-row">
+            <td class="rockets-data-name">In Use:</td>
+            <td class="rockets-data-value">${active}</td>
+        </tr>
+    </table>
+    <h4>Payload Weights</h4>
+    <table id="payloadWeigths">
+    </table>
+    <button class="hover-background-animation link-2" onclick="closeRocketDataCard()">Back</button>`;
+}
+
+function createPayloadHtml(payloadId, weight) {
+    return /*html*/ `
+    <tr class="rockets-row">
+        <td class="rockets-data-name">${payloadId}:</td>
+        <td class="rockets-data-value">${weight}kg</td>
+    </tr>`
 }
