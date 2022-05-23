@@ -43,11 +43,11 @@ function createRocketCard(rocket, i) {
 
 // Create Rocket Data Card
 
-function createRocketDataCard(i, rocketsAsJson) {
+function createRocketDataCard(i) {
     let dataLeft = document.getElementById('rocket-data-left');
     let dataRight = document.getElementById('rocket-data-right');
     emptyDataHtml(dataLeft, dataRight);
-    fillRocketDataLeft(i, rocketsAsJson, dataLeft);
+    fillRocketDataLeft(i, dataLeft);
 
     openRocketDataCard();
 }
@@ -61,8 +61,29 @@ function emptyDataHtml(dataLeft, dataRight) {
 
 // Fill Rocket Data
 
-function fillRocketDataLeft(i, rocketsAsJson, dataLeft) {
- 
+function fillRocketDataLeft(i, dataLeft) {
+    dataLeft.innerHTML += createrocketDataLeftHtml(i);
+    createslideshow(i);
+}
+
+// Create Slideshow
+
+function createslideshow(i) {
+    let imgContainer = document.getElementById('slideshow-container');
+    let dotContainer = document.getElementById('dot-container');
+    let pictures = rocketsAsJson[i]['flickr_images'];
+    for (let i = 0; i < pictures.length; i++) {
+        const picture = pictures[i];
+        imgContainer.innerHTML += /*html*/ `
+            <div class="mySlides fade">
+                <img src="${picture}" style="width:100%">
+            </div>`;
+        dotContainer.innerHTML += /*html*/ `
+            <span class="dot" onclick="currentSlide(${i + 1})"></span>`;
+    }
+    imgContainer.innerHTML += /*html*/ `
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>`;
 }
 
 // Open Rocket Data Card
@@ -130,6 +151,14 @@ function createRocketChardHTML(rocketName, rocketImages, rocketDescription, i) {
             <img src="${rocketImages[0]}" onerror='this.onerror = null; this.src="img/Fallback.jpeg"' alt="">
             <span>${rocketDescription}</span>
         </div>
-    <button class="hover-background-animation link-1" onclick="createRocketDataCard('${i}', '${rocketsAsJson}'), showSlides(slideIndex)">Data</button>
+    <button class="hover-background-animation link-1" onclick="createRocketDataCard('${i}'), showSlides(slideIndex)">Data</button>
 </div>`
+}
+
+function createrocketDataLeftHtml(i) {
+    return /*html*/ `
+    <h2>${rocketsAsJson[i]['name']}</h2>
+    <div class="slideshow-container" id="slideshow-container"></div>
+    <div id="dot-container" style="text-align:center"></div>
+    `;
 }
