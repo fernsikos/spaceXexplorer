@@ -1,14 +1,33 @@
 let rocketsAsJson;
 let main = document.getElementsByClassName('main');
+let rocketIds = []; //'Name': 'Id',
+let rocketsToSearch = [0];
 
+function init() {
+    loadRockets();
+}
+
+// Load Rocket API
 async function loadRockets() {
     let url = `https://api.spacexdata.com/v4/rockets`;
     let rockets = await fetch(url);
     rocketsAsJson = await rockets.json();
+    fillRockedIds();
     loadRocket();
     document.getElementById('main-page').classList.add('fade-in');
 }
 
+// Saves Rocked Id´s and Names
+function fillRockedIds() {
+    for (let i = 0; i < rocketsAsJson.length; i++) {
+        const rocket = rocketsAsJson[i];
+        let rocketName = rocket['name'];
+        let rocketId = rocket['id'];
+        rocketIds[rocketName] = rocketId;
+    }
+}
+
+// Load Each Rocket
 function loadRocket() {
     document.getElementById('rockets-container').innerHTML = '';
     for (let i = 0; i < rocketsAsJson.length; i++) {
@@ -26,7 +45,6 @@ function createRocketCard(rocket, i) {
 }
 
 // Create Rocket Data Card
-
 function createRocketDataCard(i) {
     let dataLeft = document.getElementById('rocket-data-left');
     let dataRight = document.getElementById('rocket-data-right');
@@ -37,15 +55,13 @@ function createRocketDataCard(i) {
     openRocketDataCard();
 }
 
-// Empty Rocked Data Html
-
+// Empty Rocket Data Html
 function emptyDataHtml(dataLeft, dataRight) {
     dataLeft.innerHTML = '';
     dataRight.innerHTML = '';
 }
 
-// Fill Rocket Data
-
+// Fill Rocket Data Html
 function fillRocketDataLeft(i, dataLeft) {
     dataLeft.innerHTML += createrocketDataLeftHtml(i);
     createslideshow(i);
@@ -77,7 +93,6 @@ function fillPayloadWeights(payloadWeights) {
 }
 
 // Create Slideshow
-
 function createslideshow(i) {
     let imgContainer = document.getElementById('slideshow-container');
     let dotContainer = document.getElementById('dot-container');
@@ -96,8 +111,32 @@ function createslideshow(i) {
         <a class="next" onclick="plusSlides(1)">&#10095;</a>`;
 }
 
-// Show Rocket Page Animation
+// Launch Page
 
+function selctRocketsToSearch(id) {
+    fillRocketsToSearchArray(id);
+    selctIconBackgroundAnimation();
+}
+
+// Checks Items in Array
+function fillRocketsToSearchArray(id) {
+    if (id === 0) {
+        rocketsToSearch = [0];
+    } else if (rocketsToSearch.includes(id) === false) {
+        rocketsToSearch.push(id);
+        if (rocketsToSearch.includes(0)) {
+            rocketsToSearch.splice(0, 1)
+        }
+    } else {
+        rocketsToSearch.splice(rocketsToSearch.indexOf(id), 1)
+        if (rocketsToSearch.length < 1) {
+            rocketsToSearch = [0];
+        }
+    }
+}
+
+// Animations
+// Show Rocket Page Animation
 function showRocketPage() {
     for (let i = 0; i < main.length; i++) {
         const mainElement = main[i];
@@ -117,7 +156,6 @@ function showRocketPage() {
 }
 
 // Show Main Page Animation
-
 function showMainPage() {
     for (let i = 0; i < main.length; i++) {
         const mainElement = main[i];
@@ -135,7 +173,6 @@ function showMainPage() {
 }
 
 // Open Rocket Data Card Animation
-
 function openRocketDataCard(i) {
     document.getElementById('rockets-container').classList.add('fade-out');
     setTimeout(() => {
@@ -157,6 +194,20 @@ function closeRocketDataCard() {
     setTimeout(() => {
         document.getElementById('rockets-container').classList.remove('fade-out');
     }, 800);
+}
+
+// Background Selectanimation Lauch Page
+function selctIconBackgroundAnimation() {
+    let toggleAllOff = document.getElementsByClassName('select-rocket-card');
+    for (let i = 0; i < toggleAllOff.length; i++) {
+        const element = toggleAllOff[i];
+        element.classList.remove('select-rocket-card-active');
+    }
+    for (let i = 0; i < rocketsToSearch.length; i++) {
+        const idIndex = rocketsToSearch[i];
+        document.getElementById('rocket-' + idIndex).classList.add('select-rocket-card-active');
+    }
+    
 }
 
 // SLideshow Start

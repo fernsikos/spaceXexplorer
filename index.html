@@ -11,7 +11,7 @@
     <script src="script.js"></script>
 </head>
 
-<body onload="loadRockets();">
+<body onload="init();">
     <header>
         <div class="logo-container" onclick="showMainPage()">
             <div class="logo-left">SpaceX </div>
@@ -53,7 +53,20 @@
             <div class="rocket-data-right" id="rocket-data-right">
             </div>
         </div>
+    </div>
 
+    <div class="launches-content-container">
+        <h1>Launches</h1>
+        <div class="input-container">
+            <div class="select-rocket-container">
+                <div class="select-rocket-card select-rocket-card-active" id="rocket-0" onclick="selctRocketsToSearch(0)">All</div>
+                <div class="select-rocket-card" id="rocket-1" onclick="selctRocketsToSearch(1)">Falcon 1</div>
+                <div class="select-rocket-card" id="rocket-2" onclick="selctRocketsToSearch(2)">Falcon 9</div>
+                <div class="select-rocket-card" id="rocket-3" onclick="selctRocketsToSearch(3)"> Falcon Super Heavy</div>
+                <div class="select-rocket-card" id="rocket-4" onclick="selctRocketsToSearch(4)">Starship</div>
+            </div>
+            
+        </div>
     </div>
 
 

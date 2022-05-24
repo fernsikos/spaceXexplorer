@@ -121,6 +121,38 @@ h1 {
     font-family: spacex-bold;
 }
 
+/* Lauches Page */
+
+.launches-content-container {
+    background-image: url(img/image-from-rawpixel-id-2229698-jpeg.jpg);
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.launches-content-container h1 {
+    padding-top: 130px;
+}
+
+.select-rocket-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+}
+
+.select-rocket-card {
+    margin: 0 12px;
+    border: 2px solid white;
+    padding: 10px 15px;
+    background-color: rgba(30, 30, 30, 0.3);
+    cursor: pointer;
+}
+
+
+
+
 /* Animations */
 .fade-out {
     opacity: 0 !important;
@@ -132,6 +164,7 @@ h1 {
     transition: opacity 0.5s ease-in-out !important;
 }
 
+/* Underline Link Animation */
 .hover-underline-animation {
     display: inline-block;
     position: relative;
@@ -155,6 +188,7 @@ h1 {
     transform-origin: bottom left;
 }
 
+/* Background Link Animation */
 .hover-background-animation {
     position: relative;
     z-index: 1;
@@ -179,6 +213,42 @@ h1 {
 
 .hover-background-animation:hover {
     color: black !important;
+}
+
+/* Select Rocket Card Background Animation */
+
+.select-rocket-card {
+    position: relative;
+    z-index: 1;
+}
+
+.select-rocket-card::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: scaleY(0);
+    transform-origin: top center;
+    background-color: white;
+    z-index: -1;
+    transition: transform 0.3s;
+}
+
+.select-rocket-card:hover::after {
+    transform: scaleY(1);
+    transform-origin: bottom;
+}
+
+.select-rocket-card:hover {
+    color: black !important;
+}
+
+.select-rocket-card-active {
+    background-color: white !important;
+    color: black !important;
+    border: 2px solid black;
 }
 
 /* Medias */
