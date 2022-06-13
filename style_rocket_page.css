@@ -14,7 +14,7 @@
     flex-wrap: wrap;
     margin-left: 24px;
     margin-right: 24px;
-    margin-bottom: 24px;
+    padding-bottom: 24px;
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
 }

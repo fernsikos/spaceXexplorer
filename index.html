@@ -21,7 +21,7 @@
         <div class="navbar">
             <ul class="nav-links">
                 <li class="nav-items hover-underline-animation" onclick="showRocketPage()">Rockets</li>
-                <li class="nav-items hover-underline-animation">Launches</li>
+                <li class="nav-items hover-underline-animation" onclick="showLaunchesPage()">Launches</li>
             </ul>
         </div>
     </header>
@@ -38,7 +38,7 @@
             style="background-image: url(img/negative-space-spacex-night-rocket-launch.jpg);">
             <div class="main-page-link-container">
                 <h2>Launches</h2>
-                <button class="hover-background-animation link-1">Browse</button>
+                <button class="hover-background-animation link-1" onclick="showLaunchesPage()">Browse</button>
             </div>
         </div>
     </div>
@@ -55,17 +55,15 @@
         </div>
     </div>
 
-    <div class="launches-content-container">
+    <div class="launches-content-container main d-none" id="launches">
         <h1>Launches</h1>
         <div class="input-container">
-            <div class="select-rocket-container">
-                <div class="select-rocket-card select-rocket-card-active" id="rocket-0" onclick="selctRocketsToSearch(0)">All</div>
-                <div class="select-rocket-card" id="rocket-1" onclick="selctRocketsToSearch(1)">Falcon 1</div>
-                <div class="select-rocket-card" id="rocket-2" onclick="selctRocketsToSearch(2)">Falcon 9</div>
-                <div class="select-rocket-card" id="rocket-3" onclick="selctRocketsToSearch(3)"> Falcon Super Heavy</div>
-                <div class="select-rocket-card" id="rocket-4" onclick="selctRocketsToSearch(4)">Starship</div>
+            <div class="select-rocket-container" id="select-container">
             </div>
-            
+        </div>
+        <div class="launches-data-container">
+            <table id="launches-table">
+            </table>
         </div>
     </div>
 

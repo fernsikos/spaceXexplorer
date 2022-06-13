@@ -1,20 +1,30 @@
 let rocketsAsJson;
+let launchesAsJson;
 let main = document.getElementsByClassName('main');
-let rocketIds = []; //'Name': 'Id',
+let rocketIds = []; //'Id': 'Name',
 let rocketsToSearch = [0];
 
 function init() {
     loadRockets();
+    loadLaunches();
 }
 
-// Load Rocket API
+// Load APIs
 async function loadRockets() {
     let url = `https://api.spacexdata.com/v4/rockets`;
-    let rockets = await fetch(url);
-    rocketsAsJson = await rockets.json();
+    let response = await fetch(url);
+    rocketsAsJson = await response.json();
     fillRockedIds();
     loadRocket();
+    loadRocketFilter();
     document.getElementById('main-page').classList.add('fade-in');
+}
+
+async function loadLaunches() {
+    let url = `https://api.spacexdata.com/v5/launches`;
+    let response = await fetch(url);
+    launchesAsJson = await response.json();
+    loadLaunchesByFilter();
 }
 
 // Saves Rocked Id´s and Names
@@ -23,11 +33,11 @@ function fillRockedIds() {
         const rocket = rocketsAsJson[i];
         let rocketName = rocket['name'];
         let rocketId = rocket['id'];
-        rocketIds[rocketName] = rocketId;
+        rocketIds[rocketId] = rocketName;
     }
 }
 
-// Load Each Rocket
+// Load Rocket from Rockets
 function loadRocket() {
     document.getElementById('rockets-container').innerHTML = '';
     for (let i = 0; i < rocketsAsJson.length; i++) {
@@ -44,18 +54,16 @@ function createRocketCard(rocket, i) {
     container.innerHTML += createRocketChardHTML(rocketName, rocketImages, rocketDescription, i);
 }
 
-// Create Rocket Data Card
+//Rocket Data Card
 function createRocketDataCard(i) {
     let dataLeft = document.getElementById('rocket-data-left');
     let dataRight = document.getElementById('rocket-data-right');
     emptyDataHtml(dataLeft, dataRight);
     fillRocketDataLeft(i, dataLeft);
     fillRocketDataRight(i, dataRight);
-
     openRocketDataCard();
 }
 
-// Empty Rocket Data Html
 function emptyDataHtml(dataLeft, dataRight) {
     dataLeft.innerHTML = '';
     dataRight.innerHTML = '';
@@ -92,45 +100,112 @@ function fillPayloadWeights(payloadWeights) {
     }
 }
 
-// Create Slideshow
+// Create Rocket Picture Slideshow
 function createslideshow(i) {
     let imgContainer = document.getElementById('slideshow-container');
     let dotContainer = document.getElementById('dot-container');
     let pictures = rocketsAsJson[i]['flickr_images'];
     for (let i = 0; i < pictures.length; i++) {
         const picture = pictures[i];
-        imgContainer.innerHTML += /*html*/ `
-            <div class="mySlides fade">
-                <img src="${picture}" onerror='this.onerror = null; this.src="img/Fallback.jpeg"' ">
-            </div>`;
-        dotContainer.innerHTML += /*html*/ `
-            <span class="dot" onclick="currentSlide(${i + 1})"></span>`;
+        imgContainer.innerHTML += createSlideshowHTML(picture);
+        dotContainer.innerHTML += createSlideshowDotsHTML(i);
     }
-    imgContainer.innerHTML += /*html*/ `
-        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-        <a class="next" onclick="plusSlides(1)">&#10095;</a>`;
+    imgContainer.innerHTML += createSlideschowSlideButtonsHTML();
 }
 
 // Launch Page
-
-function selctRocketsToSearch(id) {
-    fillRocketsToSearchArray(id);
-    selctIconBackgroundAnimation();
+function loadRocketFilter() {
+    container = document.getElementById('select-container');
+    container.innerHTML = filterAllItemHtml();
+    for (let i = 0; i < rocketsAsJson.length; i++) {
+        const rocket = rocketsAsJson[i];
+        const rocketName = rocket['name'];
+        const rocketId = i + 1;
+        container.innerHTML += filterRocketItemsHtml(rocketId, rocketName);
+    }
 }
 
-// Checks Items in Array
+function selectRocketsToSearch(id) {
+    fillRocketsToSearchArray(id);
+    selectIconBackgroundAnimation();
+}
+
+// Checks Rockets To Search Items in Array, ID=0 means Search All Rockets
 function fillRocketsToSearchArray(id) {
-    if (id === 0) {
+    if (searchAllRockets(id)) {
         rocketsToSearch = [0];
-    } else if (rocketsToSearch.includes(id) === false) {
+    } else if (clickedRocketIsNotInRocketToSearch(id)) {
         rocketsToSearch.push(id);
         if (rocketsToSearch.includes(0)) {
             rocketsToSearch.splice(0, 1)
+        }
+        if (rocketsToSearch.length > 3) {
+            rocketsToSearch = [0]
         }
     } else {
         rocketsToSearch.splice(rocketsToSearch.indexOf(id), 1)
         if (rocketsToSearch.length < 1) {
             rocketsToSearch = [0];
+        }
+    }
+    loadLaunchesByFilter()
+}
+
+// Fill Launches Table
+function loadLaunchesByFilter() {
+    let container = document.getElementById('launches-table');
+    container.innerHTML = createTableHeadHtml();
+    if (allRocketsSelected()) {
+        renderAllLaunches(container);
+    } else {
+        renderLaunchesBySelectetRockets(container)
+    }
+
+}
+
+function renderAllLaunches(container) {
+    for (let i = 0; i < launchesAsJson.length; i++) {
+        const launch = launchesAsJson[i];
+        let launchDate = launch['date_local'].slice(0, 4);
+        let misiionName = launch['name'];
+        let rocketId = launch['rocket'];
+        let rocketName = rocketIds[rocketId];
+        let launchSuccess = launch['success'];
+        let rocketReused = launch.fairings?.reused;
+        let recovered = launch.fairings?.reused;
+        if (rocketReused === undefined || rocketReused === null) {
+            rocketReused = '-'
+        }
+        if (recovered === undefined || recovered === null) {
+            recovered = '-'
+        }
+        container.innerHTML += createTableDataHtml(launchDate, misiionName, rocketName, launchSuccess, rocketReused, recovered);
+    }
+}
+
+function renderLaunchesBySelectetRockets(container) {
+    for (let i = 0; i < rocketsToSearch.length; i++) {
+        const rocketToSearch = rocketsToSearch[i];
+        const indexOfRocketToSearch = rocketToSearch - 1;
+        const idOfRocketToSearch = rocketsAsJson[indexOfRocketToSearch]['id'];
+        for (let y = 0; y < launchesAsJson.length; y++) {
+            const launch = launchesAsJson[y];
+            if (launch['rocket'].includes(idOfRocketToSearch)) {
+                let launchDate = launch['date_local'].slice(0, 4);
+                let misiionName = launch['name'];
+                let rocketId = launch['rocket'];
+                let rocketName = rocketIds[rocketId];
+                let launchSuccess = launch['success'];
+                let rocketReused = launch.fairings?.reused;
+                let recovered = launch.fairings?.reused;
+                if (rocketReused === undefined || rocketReused === null) {
+                    rocketReused = '-'
+                }
+                if (recovered === undefined || recovered === null) {
+                    recovered = '-'
+                }
+                container.innerHTML += createTableDataHtml(launchDate, misiionName, rocketName, launchSuccess, rocketReused, recovered);
+            }
         }
     }
 }
@@ -155,6 +230,26 @@ function showRocketPage() {
 
 }
 
+// Show Launches Page Animation
+function showLaunchesPage() {
+    for (let i = 0; i < main.length; i++) {
+        const mainElement = main[i];
+        mainElement.classList.remove('fade-in');
+        window.scrollTo(0, 0);
+        setTimeout(() => {
+            mainElement.classList.add('d-none')
+        }, 500);
+    };
+    closeRocketDataCard();
+    setTimeout(() => {
+        document.getElementById('launches').classList.remove('d-none');
+    }, 500);
+    setTimeout(() => {
+        document.getElementById('launches').classList.add('fade-in');
+    }, 550);
+
+}
+
 // Show Main Page Animation
 function showMainPage() {
     for (let i = 0; i < main.length; i++) {
@@ -175,6 +270,7 @@ function showMainPage() {
 // Open Rocket Data Card Animation
 function openRocketDataCard(i) {
     document.getElementById('rockets-container').classList.add('fade-out');
+    window.scrollTo(0, 0);
     setTimeout(() => {
         document.getElementById('rockets-container').classList.add('d-none');
         document.getElementById('rocket-data').classList.remove('d-none');
@@ -197,7 +293,7 @@ function closeRocketDataCard() {
 }
 
 // Background Selectanimation Lauch Page
-function selctIconBackgroundAnimation() {
+function selectIconBackgroundAnimation() {
     let toggleAllOff = document.getElementsByClassName('select-rocket-card');
     for (let i = 0; i < toggleAllOff.length; i++) {
         const element = toggleAllOff[i];
@@ -207,7 +303,7 @@ function selctIconBackgroundAnimation() {
         const idIndex = rocketsToSearch[i];
         document.getElementById('rocket-' + idIndex).classList.add('select-rocket-card-active');
     }
-    
+
 }
 
 // SLideshow Start
@@ -241,7 +337,6 @@ function showSlides(n) {
 // Slideshow End
 
 // HTML Templates
-
 function createRocketChardHTML(rocketName, rocketImages, rocketDescription, i) {
     return /*html*/ `
     <div class="rocket-card">
@@ -311,4 +406,67 @@ function createPayloadHtml(payloadId, weight) {
         <td class="rockets-data-name">${payloadId}:</td>
         <td class="rockets-data-value">${weight}kg</td>
     </tr>`
+}
+
+function createTableHeadHtml() {
+    return /*html*/ `
+    <tr class="table-head">
+    <th>Date</td>
+    <th>Mission Name</td>
+    <th>Rocket Name</td>
+    <th>Success</td>
+    <th>Reused</td>
+    <th>Recovered</td>
+</tr>`
+}
+
+function createTableDataHtml(launchDate, misiionName, rocketName, launchSuccess, rocketReused, recovered) {
+    return /*html*/ `
+    <tr>
+        <td>${launchDate}</td>
+        <td class="mission-name">${misiionName}</td>
+        <td>${rocketName}</td>
+        <td>${launchSuccess}</td>
+        <td>${rocketReused}</td>
+        <td>${recovered}</td>
+    </tr>`
+}
+
+function filterAllItemHtml() {
+    return /*html*/ `<div class="select-rocket-card select-rocket-card-active" id="rocket-0" onclick="selectRocketsToSearch(0)">All</div>`
+}
+
+function filterRocketItemsHtml(rocketId, rocketName) {
+    return /*html*/ `<div class="select-rocket-card" id="rocket-${rocketId}" onclick="selectRocketsToSearch(${rocketId})">${rocketName}</div>
+    `
+}
+
+function allRocketsSelected() {
+    return rocketsToSearch[0] === 0
+}
+
+function createSlideshowHTML(picture) {
+    return /*html*/ `
+    <div class="mySlides fade">
+        <img src="${picture}" onerror='this.onerror = null; this.src="img/Fallback.jpeg"' ">
+    </div>`
+}
+
+function createSlideshowDotsHTML(i) {
+    return /*html*/ `
+    <span class="dot" onclick="currentSlide(${i + 1})"></span>`
+}
+
+function createSlideschowSlideButtonsHTML() {
+    return /*html*/ `
+    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+    <a class="next" onclick="plusSlides(1)">&#10095;</a>`
+}
+
+function searchAllRockets(id) {
+    return id === 0
+}
+
+function clickedRocketIsNotInRocketToSearch(id) {
+    return rocketsToSearch.includes(id) === false
 }
