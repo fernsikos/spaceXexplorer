@@ -69,7 +69,7 @@ function emptyDataHtml(dataLeft, dataRight) {
     dataRight.innerHTML = '';
 }
 
-// Fill Rocket Data Html
+// Fill Rocket Data
 function fillRocketDataLeft(i, dataLeft) {
     dataLeft.innerHTML += createrocketDataLeftHtml(i);
     createslideshow(i);
@@ -77,26 +77,16 @@ function fillRocketDataLeft(i, dataLeft) {
 
 function fillRocketDataRight(i, dataRight) {
     let rocket = rocketsAsJson[i];
-    let firstFlight = rocket['first_flight'];
-    let height = rocket['height']['meters'];
-    let diameter = rocket['diameter']['meters'];
-    let mass = rocket['mass']['kg'];
-    let engines = rocket['engines']['numer'];
-    let costPerLaunch = rocket['cost_per_launch'];
-    let successRate = rocket['success_rate_pct'];
-    let active = rocket['active'];
-    let payloadWeights = rocket['payload_weights'];
-    dataRight.innerHTML += createRocketDataRightHtml(firstFlight, height, diameter, mass, engines, costPerLaunch, successRate, active, payloadWeights);
-    fillPayloadWeights(payloadWeights);
+    dataRight.innerHTML += createRocketDataRightHtml(rocket);
+    fillPayloadWeights(rocket);
 }
 
-function fillPayloadWeights(payloadWeights) {
+function fillPayloadWeights(rocket) {
+    let payloadWeights = rocket['payload_weights'];
     for (let i = 0; i < payloadWeights.length; i++) {
         const payloadWeight = payloadWeights[i];
-        let payloadId = payloadWeight['id'];
-        let weight = payloadWeight['kg'];
         let container = document.getElementById('payloadWeigths');
-        container.innerHTML += createPayloadHtml(payloadId, weight);
+        container.innerHTML += createPayloadHtml(payloadWeight);
     }
 }
 
@@ -130,20 +120,26 @@ function selectRocketsToSearch(id) {
     selectIconBackgroundAnimation();
 }
 
-// Checks Rockets To Search Items in Array, ID=0 means Search All Rockets
+// Fills And Checks Search Filter Array. Array Is Used For Filter And Style Animation.
+// If Array Contains Only [0] Means Search All Rockets. Initialy All Rockets is selected.
 function fillRocketsToSearchArray(id) {
     if (searchAllRockets(id)) {
         rocketsToSearch = [0];
     } else if (clickedRocketIsNotInRocketToSearch(id)) {
         rocketsToSearch.push(id);
+        // Checks If Pushed Element Is The First One And Removes The Search All Item (0)
         if (rocketsToSearch.includes(0)) {
             rocketsToSearch.splice(0, 1)
         }
+        // Checks If More Then 3 Rockets Selectet (All Rockets) And Adjusts The Array To Initial State
         if (rocketsToSearch.length > 3) {
             rocketsToSearch = [0]
         }
-    } else {
+    } 
+    // Element Includes In Array. Removes Element From Search Array
+    else {
         rocketsToSearch.splice(rocketsToSearch.indexOf(id), 1)
+        // Sets Initial State for Array, If Array is Empty
         if (rocketsToSearch.length < 1) {
             rocketsToSearch = [0];
         }
@@ -166,20 +162,20 @@ function loadLaunchesByFilter() {
 function renderAllLaunches(container) {
     for (let i = 0; i < launchesAsJson.length; i++) {
         const launch = launchesAsJson[i];
-        let launchDate = launch['date_local'].slice(0, 4);
-        let misiionName = launch['name'];
-        let rocketId = launch['rocket'];
-        let rocketName = rocketIds[rocketId];
-        let launchSuccess = launch['success'];
+        let rocketName = rocketIds[launch['rocket']];
         let rocketReused = launch.fairings?.reused;
         let recovered = launch.fairings?.reused;
-        if (rocketReused === undefined || rocketReused === null) {
-            rocketReused = '-'
-        }
+        checkIfRocketReusedIsEmpty(rocketReused);
         if (recovered === undefined || recovered === null) {
             recovered = '-'
         }
-        container.innerHTML += createTableDataHtml(launchDate, misiionName, rocketName, launchSuccess, rocketReused, recovered);
+        container.innerHTML += createTableDataHtml(launch, rocketName, rocketReused, recovered);
+    }
+}
+
+function checkIfRocketReusedIsEmpty(rocketReused) {
+    if (rocketReused === undefined || rocketReused === null) {
+        return rocketReused = '-'
     }
 }
 
@@ -191,11 +187,7 @@ function renderLaunchesBySelectetRockets(container) {
         for (let y = 0; y < launchesAsJson.length; y++) {
             const launch = launchesAsJson[y];
             if (launch['rocket'].includes(idOfRocketToSearch)) {
-                let launchDate = launch['date_local'].slice(0, 4);
-                let misiionName = launch['name'];
-                let rocketId = launch['rocket'];
-                let rocketName = rocketIds[rocketId];
-                let launchSuccess = launch['success'];
+                let rocketName = rocketIds[launch['rocket']];
                 let rocketReused = launch.fairings?.reused;
                 let recovered = launch.fairings?.reused;
                 if (rocketReused === undefined || rocketReused === null) {
@@ -204,7 +196,7 @@ function renderLaunchesBySelectetRockets(container) {
                 if (recovered === undefined || recovered === null) {
                     recovered = '-'
                 }
-                container.innerHTML += createTableDataHtml(launchDate, misiionName, rocketName, launchSuccess, rocketReused, recovered);
+                container.innerHTML += createTableDataHtml(launch, rocketName, rocketReused, recovered);
             }
         }
     }
@@ -357,41 +349,41 @@ function createrocketDataLeftHtml(i) {
     `;
 }
 
-function createRocketDataRightHtml(firstFlight, height, diameter, mass, engines, costPerLaunch, successRate, active, payloadWeights) {
+function createRocketDataRightHtml(rocket) {
     return /*html*/ `
     <h3>Data</h3>
     <table>
         <tr class="rockets-row">
             <td class="rockets-data-name">First flight:</td>
-            <td class="rockets-data-value">${firstFlight}</td>
+            <td class="rockets-data-value">${rocket['first_flight']}</td>
         </tr>
         <tr class="rockets-row">
             <td class="rockets-data-name">Height:</td>
-            <td class="rockets-data-value">${height}m</td>
+            <td class="rockets-data-value">${rocket['height']['meters']}m</td>
         </tr>
         <tr class="rockets-row">
             <td class="rockets-data-name">Diameter:</td>
-            <td class="rockets-data-value">${diameter}m</td>
+            <td class="rockets-data-value">${rocket['diameter']['meters']}m</td>
         </tr>
         <tr class="rockets-row">
             <td class="rockets-data-name">Mass:</td>
-            <td class="rockets-data-value">${mass}kg</td>
+            <td class="rockets-data-value">${rocket['mass']['kg']}kg</td>
         </tr>
         <tr class="rockets-row">
             <td class="rockets-data-name">Engines:</td>
-            <td class="rockets-data-value">${engines}</td>
+            <td class="rockets-data-value">${rocket['engines']['numer']}</td>
         </tr>
         <tr class="rockets-row">
             <td class="rockets-data-name">Cost Per Launch:</td>
-            <td class="rockets-data-value">${costPerLaunch}$</td>
+            <td class="rockets-data-value">${rocket['cost_per_launch']}$</td>
         </tr>
         <tr class="rockets-row">
             <td class="rockets-data-name">Success Rate:</td>
-            <td class="rockets-data-value">${successRate}%</td>
+            <td class="rockets-data-value">${rocket['success_rate_pct']}%</td>
         </tr>
         <tr class="rockets-row">
             <td class="rockets-data-name">In Use:</td>
-            <td class="rockets-data-value">${active}</td>
+            <td class="rockets-data-value">${rocket['active']}</td>
         </tr>
     </table>
     <h4>Payload Weights</h4>
@@ -400,11 +392,11 @@ function createRocketDataRightHtml(firstFlight, height, diameter, mass, engines,
     <button class="hover-background-animation link-2" onclick="closeRocketDataCard()">Back</button>`;
 }
 
-function createPayloadHtml(payloadId, weight) {
+function createPayloadHtml(payloadWeight) {
     return /*html*/ `
     <tr class="rockets-row">
-        <td class="rockets-data-name">${payloadId}:</td>
-        <td class="rockets-data-value">${weight}kg</td>
+        <td class="rockets-data-name">${payloadWeight['id']}:</td>
+        <td class="rockets-data-value">${payloadWeight['kg']}kg</td>
     </tr>`
 }
 
@@ -420,13 +412,13 @@ function createTableHeadHtml() {
 </tr>`
 }
 
-function createTableDataHtml(launchDate, misiionName, rocketName, launchSuccess, rocketReused, recovered) {
+function createTableDataHtml(launch, rocketName, rocketReused, recovered) {
     return /*html*/ `
     <tr>
-        <td>${launchDate}</td>
-        <td class="mission-name">${misiionName}</td>
+        <td>${launch['date_local'].slice(0, 4)}</td>
+        <td class="mission-name">${launch['name']}</td>
         <td>${rocketName}</td>
-        <td>${launchSuccess}</td>
+        <td>${launch['success']}</td>
         <td>${rocketReused}</td>
         <td>${recovered}</td>
     </tr>`
