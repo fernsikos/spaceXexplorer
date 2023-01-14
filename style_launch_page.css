@@ -1,0 +1,57 @@
+/* Lauches Page */
+
+.launches-content-container {
+    background-image: url(img/image-from-rawpixel-id-2229698-jpeg.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#launches-table {
+    min-width: 720px;
+}
+
+.launches-content-container h1 {
+    padding-top: 130px;
+}
+
+.select-rocket-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+}
+
+.select-rocket-card {
+    margin: 0 12px;
+    border: 2px solid white;
+    padding: 10px 15px;
+    background-color: rgba(30, 30, 30, 0.3);
+    cursor: pointer;
+}
+
+.launches-data-container {
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-bottom: 50px;
+}
+
+.launches-data-container table {
+    text-align: center;
+    background-color: rgba(30, 30, 30, 0.3);
+    border: 2px solid white;
+    margin-top: 48px;
+}
+
+
+.launches-data-container td, th {
+    padding: 6 12px;
+    vertical-align: text-top;
+}
+
+.mission-name {
+    max-width: 300px;
+}

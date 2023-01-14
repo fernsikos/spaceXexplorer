@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space-X-Explorer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_rocket_page.css">
+    <link rel="stylesheet" href="style_launch_page.css">
+    <script src="script.js"></script>
+</head>
+
+<body onload="init();">
+    <div class="main-container">
+        <header>
+            <a href="/index.html" class="logo-container" onclick="showMainPage()">
+                <div class="logo-left">SpaceX </div>
+                <div class="logo-right">explorer</div>
+            </a>
+
+            <div class="navbar">
+                <ul class="nav-links">
+                    <li class="nav-items hover-underline-animation" onclick="showRocketPage()">Rockets</li>
+                    <li class="nav-items hover-underline-animation" onclick="showLaunchesPage()">Launches</li>
+                </ul>
+            </div>
+        </header>
+
+        <div class="welcome" id="main-page" style="background-image: url(img/spacex-693229_1280.jpg);">
+            <div class="welcome-page-link-container">
+                <h2>Welcome To Space X Explorer</h2>
+                <p>Explore all rockets and the latest launch data of your favorite space company.</p>
+                <a class="hover-background-animation link-1" href="/index.html">Browse</a>
+            </div>
+        </div>
+
+        
+        <div class="footer">
+            <a href="/imprint.html" class="hover-underline-animation">Imprint</a>
+            <a href="/legal-notice.html" class="hover-underline-animation">Legal-Notice</a>
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>

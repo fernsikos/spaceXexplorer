@@ -3,10 +3,10 @@ let launchesAsJson;
 let main = document.getElementsByClassName('main');
 let rocketIds = []; //'Id': 'Name',
 let rocketsToSearch = [0];
+let visited = false;
 
 function init() {
-    loadRockets();
-    loadLaunches();
+    document.getElementById('main-page').classList.add('fade-in');
 }
 
 // Load APIs
@@ -17,11 +17,10 @@ async function loadRockets() {
     fillRockedIds();
     loadRocket();
     loadRocketFilter();
-    document.getElementById('main-page').classList.add('fade-in');
 }
 
 async function loadLaunches() {
-    let url = `https://api.spacexdata.com/v5/launches`;
+    let url = `https://api.spacexdata.com/v5/launches/`;
     let response = await fetch(url);
     launchesAsJson = await response.json();
     loadLaunchesByFilter();
@@ -46,6 +45,7 @@ function loadRocket() {
     }
 }
 
+// creates the rocket cards
 function createRocketCard(rocket, i) {
     let rocketName = rocket['name'];
     let rocketImages = rocket['flickr_images'];
@@ -64,6 +64,7 @@ function createRocketDataCard(i) {
     openRocketDataCard();
 }
 
+//empties the data
 function emptyDataHtml(dataLeft, dataRight) {
     dataLeft.innerHTML = '';
     dataRight.innerHTML = '';
@@ -75,6 +76,7 @@ function fillRocketDataLeft(i, dataLeft) {
     createslideshow(i);
 }
 
+// fills the rocket data
 function fillRocketDataRight(i, dataRight) {
     let rocket = rocketsAsJson[i];
     dataRight.innerHTML += createRocketDataRightHtml(rocket);
@@ -115,6 +117,7 @@ function loadRocketFilter() {
     }
 }
 
+//Rockets selector
 function selectRocketsToSearch(id) {
     fillRocketsToSearchArray(id);
     selectIconBackgroundAnimation();
@@ -159,26 +162,33 @@ function loadLaunchesByFilter() {
 
 }
 
+//Renders all launches 
 function renderAllLaunches(container) {
     for (let i = 0; i < launchesAsJson.length; i++) {
         const launch = launchesAsJson[i];
         let rocketName = rocketIds[launch['rocket']];
         let rocketReused = launch.fairings?.reused;
         let recovered = launch.fairings?.reused;
+        // Funktion Funktioniert So Noch Nicht
         checkIfRocketReusedIsEmpty(rocketReused);
         if (recovered === undefined || recovered === null) {
             recovered = '-'
+        };
+        if (rocketReused === undefined || rocketReused === null) {
+            rocketReused = '-'
         }
         container.innerHTML += createTableDataHtml(launch, rocketName, rocketReused, recovered);
     }
 }
 
+//Checkes for empty field
 function checkIfRocketReusedIsEmpty(rocketReused) {
     if (rocketReused === undefined || rocketReused === null) {
         return rocketReused = '-'
     }
 }
 
+//Render filtered rockets
 function renderLaunchesBySelectetRockets(container) {
     for (let i = 0; i < rocketsToSearch.length; i++) {
         const rocketToSearch = rocketsToSearch[i];
@@ -204,42 +214,49 @@ function renderLaunchesBySelectetRockets(container) {
 
 // Animations
 // Show Rocket Page Animation
-function showRocketPage() {
+async function showRocketPage() {
     for (let i = 0; i < main.length; i++) {
         const mainElement = main[i];
         mainElement.classList.remove('fade-in')
         setTimeout(() => {
             mainElement.classList.add('d-none')
+            document.getElementById('loading-container').classList.remove('d-none');
         }, 500);
     };
     closeRocketDataCard();
+    await loadRockets();
     setTimeout(() => {
         document.getElementById('rockets').classList.remove('d-none');
     }, 500);
     setTimeout(() => {
+        document.getElementById('loading-container').classList.add('d-none');
         document.getElementById('rockets').classList.add('fade-in');
     }, 550);
 
 }
 
 // Show Launches Page Animation
-function showLaunchesPage() {
+async function showLaunchesPage() {
     for (let i = 0; i < main.length; i++) {
         const mainElement = main[i];
         mainElement.classList.remove('fade-in');
         window.scrollTo(0, 0);
         setTimeout(() => {
             mainElement.classList.add('d-none')
+            document.getElementById('loading-container').classList.remove('d-none');
         }, 500);
     };
     closeRocketDataCard();
+    await loadLaunches();
+    await loadRockets();
     setTimeout(() => {
         document.getElementById('launches').classList.remove('d-none');
+       
     }, 500);
     setTimeout(() => {
+        document.getElementById('loading-container').classList.add('d-none');
         document.getElementById('launches').classList.add('fade-in');
     }, 550);
-
 }
 
 // Show Main Page Animation
