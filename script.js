@@ -15,14 +15,15 @@ async function loadRockets() {
     let response = await fetch(url);
     rocketsAsJson = await response.json();
     fillRockedIds();
-    loadRocket();
     loadRocketFilter();
+    loadRocket();
 }
 
 async function loadLaunches() {
     let url = `https://api.spacexdata.com/v5/launches/`;
     let response = await fetch(url);
     launchesAsJson = await response.json();
+    await loadRockets();
     loadLaunchesByFilter();
 }
 
@@ -166,18 +167,22 @@ function loadLaunchesByFilter() {
 function renderAllLaunches(container) {
     for (let i = 0; i < launchesAsJson.length; i++) {
         const launch = launchesAsJson[i];
+        launch['success'] = checkIfSuccessIsEmpty(launch['success']);
         let rocketName = rocketIds[launch['rocket']];
-        let rocketReused = launch.fairings?.reused;
-        let recovered = launch.fairings?.reused;
-        // Funktion Funktioniert So Noch Nicht
-        checkIfRocketReusedIsEmpty(rocketReused);
-        if (recovered === undefined || recovered === null) {
-            recovered = '-'
-        };
-        if (rocketReused === undefined || rocketReused === null) {
-            rocketReused = '-'
-        }
+        let rocketReused = checkIfRocketReusedIsEmpty(launch.fairings?.reused);
+        let recovered = checkIfRecoveredIsEmpty(launch.fairings?.reused);
         container.innerHTML += createTableDataHtml(launch, rocketName, rocketReused, recovered);
+    }
+}
+
+//Checkes for empty field
+function checkIfSuccessIsEmpty(success) {
+    if (success === undefined || success === null) {
+        return success = '-'
+    } else if (success === true) {
+        return success = '✓'
+    } else {
+        return success = '𐄂'
     }
 }
 
@@ -185,6 +190,21 @@ function renderAllLaunches(container) {
 function checkIfRocketReusedIsEmpty(rocketReused) {
     if (rocketReused === undefined || rocketReused === null) {
         return rocketReused = '-'
+    } else if (rocketReused === true) {
+        return rocketReused = '✓'
+    } else {
+        return rocketReused = '𐄂'
+    }
+}
+
+//Checkes for empty field
+function checkIfRecoveredIsEmpty(rocketRecovered) {
+    if (rocketRecovered === undefined || rocketRecovered === null) {
+        return rocketRecovered = '-'
+    } else if (rocketRecovered === true) {
+        return rocketRecovered = '✓'
+    } else {
+        return rocketRecovered = '𐄂'
     }
 }
 
@@ -247,13 +267,13 @@ async function showLaunchesPage() {
         }, 500);
     };
     closeRocketDataCard();
-    await loadLaunches();
-    await loadRockets();
     setTimeout(() => {
         document.getElementById('launches').classList.remove('d-none');
        
     }, 500);
-    setTimeout(() => {
+    await loadLaunches();
+    await loadRockets();
+        setTimeout(() => {
         document.getElementById('loading-container').classList.add('d-none');
         document.getElementById('launches').classList.add('fade-in');
     }, 550);

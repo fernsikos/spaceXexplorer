@@ -17,6 +17,7 @@ body {
     color: white;
     margin: 0;
     font-family: spacex-regular;
+    overflow: overlay;
 }
 
 .main-container {
@@ -201,6 +202,7 @@ h1 {
 /* legal-notice*/
 .legal-notice-container {
     margin: 50px;
+    min-height: calc(100vh - 200px);
 }
 
 .legal-notice-container a {
@@ -297,6 +299,29 @@ h1 {
     color: black !important;
     border: 2px solid black;
 }
+
+
+/*Scollbar Styling*/
+::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: white;
+    -webkit-border-radius: 5px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #cacacc;
+    
+  }
 
 /* loading animation */
 #loading-container {
