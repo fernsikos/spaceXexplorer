@@ -387,6 +387,11 @@ function createrocketDataLeftHtml(i) {
 }
 
 function createRocketDataRightHtml(rocket) {
+    if(rocket['active'] == true) {
+        rocket['active'] = 'active'
+    } else if(rocket['active'] == false) {
+        rocket['active'] = 'not in use'
+    }
     return /*html*/ `
     <h3>Data</h3>
     <table>
@@ -419,7 +424,7 @@ function createRocketDataRightHtml(rocket) {
             <td class="rockets-data-value">${rocket['success_rate_pct']}%</td>
         </tr>
         <tr class="rockets-row">
-            <td class="rockets-data-name">In Use:</td>
+            <td class="rockets-data-name">Status:</td>
             <td class="rockets-data-value">${rocket['active']}</td>
         </tr>
     </table>
